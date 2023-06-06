@@ -1,4 +1,13 @@
 {
+	"contracts": {
+		"FlowFarm": "contracts/FlowFarm.cdc",
+		"FlowToken": "contracts/standards/FlowToken.cdc",
+		"FungibleToken": "contracts/standards/FungibleToken.cdc",
+		"PickingContract": "contracts/PickingContract.cdc",
+		"Player": "contracts/Player.cdc",
+		"Strawberry": "contracts/Strawberry.cdc",
+		"StrawberrySeed": "contracts/StrawberrySeed.cdc"
+	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
 		"mainnet": "access.mainnet.nodes.onflow.org:9000",
@@ -9,6 +18,23 @@
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
 			"key": "fa3ae2f8ce850a530004a05bf675ba38284955b4271b5620cfa55073d567c11a"
+		},
+		"emulator-owner": {
+			"address": "01cf0e2f2f715450",
+			"key": "fa3ae2f8ce850a530004a05bf675ba38284955b4271b5620cfa55073d567c11a"
+		}
+	},
+	"deployments": {
+		"emulator": {
+			"emulator-owner": [
+				"FlowFarm",
+				"PickingContract",
+				"Player",
+				"Strawberry",
+				"StrawberrySeed",
+				"FlowToken",
+				"FungibleToken"
+			]
 		}
 	}
 }

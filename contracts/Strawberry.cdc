@@ -7,6 +7,7 @@ pub contract Strawberry: FungibleToken {
 
     /// Storage and Public Paths
     pub let VaultStoragePath: StoragePath
+    pub let VaultPublicPath: PublicPath
     pub let ReceiverPublicPath: PublicPath
 
     /// The event that is emitted when the contract is created
@@ -110,6 +111,7 @@ pub contract Strawberry: FungibleToken {
     init() {
         self.totalSupply = 0.0
         self.VaultStoragePath = /storage/strawberryTokenVault
+        self.VaultPublicPath = /public/strawberryTokenBalance
         self.ReceiverPublicPath = /public/strawberryTokenReceiver
 
         emit TokensInitialized(initialSupply: self.totalSupply)

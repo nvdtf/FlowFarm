@@ -1,7 +1,11 @@
+import Player from "./Player.cdc"
 import Strawberry from "./Strawberry.cdc"
 import StrawberrySeed from "./StrawberrySeed.cdc"
 
 pub contract FlowFarm {
+
+    pub let SEED_GROWTH_TIME: UInt64
+    pub let HARVEST_TIME: UInt64
 
     pub resource Farm {
 
@@ -17,89 +21,92 @@ pub contract FlowFarm {
 
     }
 
-    pub resource Field {
+    pub fun newFarm(): @Farm {
+        return <- create Farm()
+    }
 
-        pub let farmers: @{UInt64: Farmer}
-        pub let plantedSeeds: @{UInt64: StrawberrySeed.Vault}
+    pub resource interface Farmable {
+        pub fun employ(farmer: @Player.Farmer)
+        pub fun farm(): @Strawberry.Vault
+        pub fun withdrawFarmer(): @Player.Farmer?
+    }
+
+    pub resource Field: Farmable {
+
+        pub var seeds: @StrawberrySeed.Vault?
+        pub var seedsPlantedHeight: UInt64?
+
+        pub var farmer: @Player.Farmer?
+        pub var farmerEmployedHeight: UInt64?
 
         init() {
-            self.farmers <- {}
-            self.plantedSeeds <- {}
+            self.seeds <- nil
+            self.seedsPlantedHeight = nil
+            self.farmer <- nil
+            self.farmerEmployedHeight = nil
         }
 
-        pub fun employ(farmer: @Farmer): UInt64 {
-            let old <- self.farmers.insert(
-                    key: getCurrentBlock().height,
-                    <- farmer
-                )
-            if old != nil {
-                panic("Farmer already registered for height")
+        pub fun employ(farmer: @Player.Farmer) {
+            pre {
+               self.farmer == nil: "Farmer already registered"
+               self.seeds != nil: "No seeds to farm"
+               getCurrentBlock().height - self.seedsPlantedHeight! >= FlowFarm.SEED_GROWTH_TIME: "Seeds are not ready to harvest"
             }
+            let old <- self.farmer <- farmer
             destroy old
-            return getCurrentBlock().height
+            self.farmerEmployedHeight = getCurrentBlock().height
         }
 
         pub fun plant(seeds: @StrawberrySeed.Vault) {
-            let old <- self.plantedSeeds.insert(
-                    key: getCurrentBlock().height,
-                    <- seeds
-                )
-            if old != nil {
-                panic("Seeds already planted for height")
+            pre {
+               self.seeds == nil: "Seeds already planted"
             }
+            let old <- self.seeds <- seeds
             destroy old
+            self.seedsPlantedHeight = getCurrentBlock().height
         }
 
-        pub fun farm(farmerHeight: UInt64): @Strawberry.Vault {
-
-            let farmer <- self.farmers.remove(key: farmerHeight)
-            if farmer == nil {
-                panic("No farmer registered for height")
+        pub fun farm(): @Strawberry.Vault {
+            // fix farming algorithm
+            pre {
+               self.farmer != nil: "No farmer employed"
+               self.seeds != nil: "No seeds are planted"
+               getCurrentBlock().height - self.seedsPlantedHeight! >= FlowFarm.SEED_GROWTH_TIME: "Seeds not ready to harvest"
+               getCurrentBlock().height - self.farmerEmployedHeight! >= FlowFarm.HARVEST_TIME: "Farmer still working"
+               self.farmerEmployedHeight! >= self.seedsPlantedHeight!: "Seeds planted after farmer employed"
             }
 
-            var energy = farmer!.energy
+            let f <- self.farmer <- nil
+            let farmer <- f!
+            let s <- self.seeds <- nil
+            let seeds <- s!
 
-            self.plantedSeeds.forEachKey(fun (key: UInt64): Bool {
-                let newEnergy: Int = Int(energy) - Int(self.plantedSeeds[key]!.balance)
-                if newEnergy > 0 {
-                    energy = UInt(newEnergy)
-                    return true
-                }
-                return newEnergy >= 0
-            })
+            let yield = seeds.balance
 
-            let old <- self.farmers.insert(key: farmerHeight, <- farmer!)
-            destroy old
+            farmer.useEnergy(amount: yield)
 
-            return <- Strawberry.mintTokens(amount: 1.0)
+            destroy seeds
+
+            self.farmer <-! farmer
+
+            return <- Strawberry.mintTokens(amount: yield)
         }
 
-        pub fun retire(farmerHeight: UInt64): @Farmer {
-            let farmer <- self.farmers[farmerHeight]
-            if farmer == nil {
-                panic("No farmer registered for height")
-            }
-            return <- farmer!
+        pub fun withdrawFarmer(): @Player.Farmer? {
+            let f <- self.farmer <- nil
+            return <- f
         }
 
         destroy () {
-            destroy self.farmers
-            destroy self.plantedSeeds
+            destroy self.farmer
+            destroy self.seeds
         }
 
     }
 
-    pub resource Farmer {
-
-        pub var energy: UInt
-
-        init(energy: UInt) {
-            self.energy = energy
-        }
-
-        pub fun useEnergy(amount: UInt) {
-            self.energy = self.energy - amount
-        }
+    init() {
+        self.SEED_GROWTH_TIME = 10
+        self.HARVEST_TIME = 3
     }
 
 }
