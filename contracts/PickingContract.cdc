@@ -1,8 +1,7 @@
 import FlowFarm from "./FlowFarm.cdc"
-import Player from "./Player.cdc"
 import FlowToken from "./standards/FlowToken.cdc"
 import FungibleToken from "./standards/FungibleToken.cdc"
-import Strawberry from "./Strawberry.cdc"
+import Strawberry from "./tokens/Strawberry.cdc"
 
 pub contract PickingContract {
 
@@ -22,14 +21,14 @@ pub contract PickingContract {
             self.strawberryReceiver = strawberryReceiver
         }
 
-        pub fun employ(farmer: @Player.Farmer): @FlowToken.Vault {
+        pub fun employ(farmer: @FlowFarm.Farmer): @FlowToken.Vault {
             self.farmCap.borrow()!.employ(farmer: <-farmer)
             let payment <- self.payment <- nil
             return <- payment!
         }
 
-        pub fun withdrawFarmer(): @Player.Farmer? {
-            let strawberries <- self.farmCap.borrow()!.farm()
+        pub fun withdrawFarmer(): @FlowFarm.Farmer? {
+            let strawberries <- self.farmCap.borrow()!.harvest()
             self.strawberryReceiver.borrow()!.deposit(from: <-strawberries)
             return <- self.farmCap.borrow()!.withdrawFarmer()
         }
@@ -37,7 +36,5 @@ pub contract PickingContract {
         destroy() {
             destroy self.payment
         }
-
     }
-
 }

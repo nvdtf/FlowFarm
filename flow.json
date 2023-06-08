@@ -4,9 +4,8 @@
 		"FlowToken": "contracts/standards/FlowToken.cdc",
 		"FungibleToken": "contracts/standards/FungibleToken.cdc",
 		"PickingContract": "contracts/PickingContract.cdc",
-		"Player": "contracts/Player.cdc",
-		"Strawberry": "contracts/Strawberry.cdc",
-		"StrawberrySeed": "contracts/StrawberrySeed.cdc"
+		"Strawberry": "contracts/tokens/Strawberry.cdc",
+		"StrawberrySeed": "contracts/tokens/StrawberrySeed.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -29,7 +28,6 @@
 			"emulator-owner": [
 				"FlowFarm",
 				"PickingContract",
-				"Player",
 				"Strawberry",
 				"StrawberrySeed",
 				"FlowToken",
