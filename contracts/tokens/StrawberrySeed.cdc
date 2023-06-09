@@ -50,7 +50,7 @@ pub contract StrawberrySeed: FungibleToken {
         return <-create Vault(balance: 0.0)
     }
 
-    // everyone can mint seeds
+    // everyone can mint seeds in this example code
     pub fun mintTokens(amount: UFix64): @StrawberrySeed.Vault {
         pre {
             amount > 0.0: "Amount minted must be greater than zero"

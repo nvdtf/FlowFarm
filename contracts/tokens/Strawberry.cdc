@@ -51,7 +51,7 @@ pub contract Strawberry: FungibleToken {
         return <-create Vault(balance: 0.0)
     }
 
-    // only contracts in token account can mint strawberries
+    // only contracts in token account can mint strawberries in this example code
     access(account) fun mintTokens(amount: UFix64): @Strawberry.Vault {
         pre {
             amount > 0.0: "Amount minted must be greater than zero"

@@ -36,7 +36,7 @@ pub contract FlowFarm {
         }
     }
 
-    // everyone can create Farmer
+    // everyone can create Farmer in this example code
     pub fun newFarmer(energy: UFix64): @Farmer {
         return <- create Farmer(energy: energy)
     }
@@ -56,7 +56,7 @@ pub contract FlowFarm {
         }
     }
 
-    // everyone can create Farm
+    // everyone can create Farm in this example code
     pub fun newFarm(): @Farm {
         return <- create Farm()
     }
