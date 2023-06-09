@@ -4,12 +4,15 @@
 		"FlowToken": {
 			"source": "contracts/standards/FlowToken.cdc",
 			"aliases": {
-				"emulator": "0ae53cb6e3f42a79",
-				"mainnet": "1654653399040a61",
-				"testnet": "7e60df042a9c0868"
+				"emulator": "0ae53cb6e3f42a79"
 			}
 		},
-		"FungibleToken": "contracts/standards/FungibleToken.cdc",
+		"FungibleToken": {
+			"source": "contracts/standards/FungibleToken.cdc",
+			"aliases": {
+				"emulator": "ee82856bf20e2aa6"
+			}
+		},
 		"PickingContract": "contracts/PickingContract.cdc",
 		"Strawberry": "contracts/tokens/Strawberry.cdc",
 		"StrawberrySeed": "contracts/tokens/StrawberrySeed.cdc"
@@ -26,11 +29,11 @@
 			"key": "fa3ae2f8ce850a530004a05bf675ba38284955b4271b5620cfa55073d567c11a"
 		},
 		"emulator-owner": {
-			"address": "01cf0e2f2f715450",
+			"address": "179b6b1cb6755e31",
 			"key": "fa3ae2f8ce850a530004a05bf675ba38284955b4271b5620cfa55073d567c11a"
 		},
 		"emulator-contractor": {
-			"address": "179b6b1cb6755e31",
+			"address": "01cf0e2f2f715450",
 			"key": "fa3ae2f8ce850a530004a05bf675ba38284955b4271b5620cfa55073d567c11a"
 		}
 	},

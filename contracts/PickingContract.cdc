@@ -12,12 +12,12 @@ pub contract PickingContract {
 
     pub resource StrawberryContract: Contract {
 
-        pub let farmCap: Capability<&{FlowFarm.Farmable}>
+        pub let farmCap: Capability<&FlowFarm.Farm>
         pub var payment: @FlowToken.Vault?
         pub let strawberryReceiver: Capability<&Strawberry.Vault{FungibleToken.Receiver}>
 
         init(
-            farmCap: Capability<&{FlowFarm.Farmable}>,
+            farmCap: Capability<&FlowFarm.Farm>,
             payment: @FlowToken.Vault,
             strawberryReceiver: Capability<&Strawberry.Vault{FungibleToken.Receiver}>
         ) {
@@ -27,21 +27,24 @@ pub contract PickingContract {
         }
 
         pub fun employ(farmer: @FlowFarm.Farmer): @FlowToken.Vault {
-            self.farmCap.borrow()!.employ(farmer: <-farmer)
+            let farm = self.farmCap.borrow()!
+            farm.field.employ(farmer: <-farmer)
             let payment <- self.payment <- nil
             return <- payment!
         }
 
         pub fun withdrawFarmer(): @FlowFarm.Farmer {
 
+            let farm = self.farmCap.borrow()!
+
             // harvest strawberries before returning Farmer
             // harvest() fails if Farmer is still working
-            let strawberries <- self.farmCap.borrow()!.harvest()
+            let strawberries <- farm.field.harvest()
 
             // deposit yield into contract capability
             self.strawberryReceiver.borrow()!.deposit(from: <-strawberries)
 
-            return <- self.farmCap.borrow()!.withdrawFarmer()!
+            return <- farm.field.withdrawFarmer()!
         }
 
         destroy() {
@@ -50,7 +53,7 @@ pub contract PickingContract {
     }
 
     pub fun newStrawberryPickingContract(
-        farmCap: Capability<&{FlowFarm.Farmable}>,
+        farmCap: Capability<&FlowFarm.Farm>,
         payment: @FlowToken.Vault,
         strawberryReceiver: Capability<&Strawberry.Vault{FungibleToken.Receiver}>
     ): @PickingContract.StrawberryContract {

@@ -20,7 +20,7 @@ transaction {
         // save Farm to storage
         owner.save(<-farm, to: /storage/myFarm)
 
-        let farmCap = owner.link<&{FlowFarm.Farmable}>(
+        let farmCap = owner.link<&FlowFarm.Farm>(
             /private/myFarmCapability,
             target: /storage/myFarm
         )!

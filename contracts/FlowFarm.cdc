@@ -54,14 +54,8 @@ pub contract FlowFarm {
         return <- create Farm()
     }
 
-    pub resource interface Farmable {
-        pub fun employ(farmer: @Farmer)
-        pub fun harvest(): @Strawberry.Vault
-        pub fun withdrawFarmer(): @Farmer?
-    }
-
     // Field is used to plant seeds and employ farmer to harvest
-    pub resource Field: Farmable {
+    pub resource Field {
 
         // store the seeds and the height they are planted
         pub var seeds: @StrawberrySeed.Vault?
