@@ -47,5 +47,10 @@ transaction {
 
         owner.save(<-c, to: /storage/myPickingContract)
 
+        owner.link<&PickingContract.StrawberryContract{PickingContract.Contract}>(
+            /public/strawberryContract01,
+            target: /storage/myPickingContract
+        )
+
     }
 }

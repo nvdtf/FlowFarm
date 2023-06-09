@@ -9,6 +9,7 @@ import (
 // Owner creates a farm, plants seeds, employs a worker and harvests the crop
 func TestFarmOwner(y *testing.T) {
 
+	// Start emulator and deploy contracts
 	o := overflow.Overflow()
 
 	// Step 1: Create a farm and plant seeds
@@ -17,7 +18,7 @@ func TestFarmOwner(y *testing.T) {
 		overflow.WithSigner("owner"),
 	)
 
-	// advance 10 blocks
+	// Advance 10 blocks
 	noop(o, 10)
 
 	// Step 2: Employ a worker to start harvesting
@@ -26,7 +27,7 @@ func TestFarmOwner(y *testing.T) {
 		overflow.WithSigner("owner"),
 	)
 
-	// advance 10 blocks
+	// Advance 10 blocks
 	noop(o, 10)
 
 	// Step 3: Harvest the strawberries
@@ -41,9 +42,16 @@ func TestPickingContract(y *testing.T) {
 
 	o := overflow.Overflow()
 
+	o.MintFlowTokens("owner", 100)
+
 	o.Tx(
 		"contractor/1_issue",
 		overflow.WithSigner("owner"),
+	)
+
+	o.Tx(
+		"contractor/2_employ",
+		overflow.WithSigner("contractor"),
 	)
 
 }
