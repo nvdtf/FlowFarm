@@ -18,8 +18,8 @@ transaction(
         // employ the Farmer
         let payment <- contractRef.employ(farmer: <-farmer)
 
+        // deposit bounty into account
         let vaultRef = contractor.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)!
         vaultRef.deposit(from: <-payment)
-
     }
 }

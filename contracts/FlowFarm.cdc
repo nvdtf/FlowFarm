@@ -11,6 +11,12 @@ pub contract FlowFarm {
     // field before strawberries are ready
     pub let HARVEST_TIME_IN_HEIGHT: UInt64
 
+    pub event SeedsPlanted(amount: UFix64)
+    pub event StrawberryHarvested(amount: UFix64)
+    pub event FarmerEmployed()
+    pub event FarmerEnergyUsed(amount: UFix64)
+    pub event FarmerRetired()
+
     // Farmer can work on the field to produce strawberries
     pub resource Farmer {
 
@@ -26,6 +32,7 @@ pub contract FlowFarm {
                 amount <= self.energy: "Not enough energy"
             }
             self.energy = self.energy - amount
+            emit FarmerEnergyUsed(amount: amount)
         }
     }
 
@@ -77,6 +84,7 @@ pub contract FlowFarm {
             pre {
                self.seeds == nil: "Seeds already planted"
             }
+            emit SeedsPlanted(amount: seeds.balance)
             let old <- self.seeds <- seeds
             destroy old
             self.seedsPlantedHeight = getCurrentBlock().height
@@ -95,6 +103,7 @@ pub contract FlowFarm {
             let old <- self.farmer <- farmer
             destroy old
             self.farmerEmployedHeight = getCurrentBlock().height
+            emit FarmerEmployed()
         }
 
         // harvest and return the yield (strawberries)
@@ -122,6 +131,8 @@ pub contract FlowFarm {
 
             let yield = seeds.balance
 
+            emit StrawberryHarvested(amount: yield)
+
             // Farmer spends energy to harvest
             farmer.useEnergy(amount: yield)
 
@@ -137,6 +148,7 @@ pub contract FlowFarm {
         // withdraw farmer from the field
         pub fun withdrawFarmer(): @Farmer? {
             let f <- self.farmer <- nil
+            emit FarmerRetired()
             return <- f
         }
 

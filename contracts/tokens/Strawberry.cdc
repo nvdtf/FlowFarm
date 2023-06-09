@@ -52,8 +52,7 @@ pub contract Strawberry: FungibleToken {
     }
 
     // only contracts in token account can mint strawberries
-    // access(account) fun mintTokens(amount: UFix64): @Strawberry.Vault {
-    pub fun mintTokens(amount: UFix64): @Strawberry.Vault {
+    access(account) fun mintTokens(amount: UFix64): @Strawberry.Vault {
         pre {
             amount > 0.0: "Amount minted must be greater than zero"
         }
