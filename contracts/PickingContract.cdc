@@ -5,7 +5,12 @@ import Strawberry from "./tokens/Strawberry.cdc"
 
 pub contract PickingContract {
 
-    pub resource Contract {
+    pub resource interface Contract {
+        pub fun employ(farmer: @FlowFarm.Farmer): @FlowToken.Vault
+        pub fun withdrawFarmer(): @FlowFarm.Farmer
+    }
+
+    pub resource StrawberryContract: Contract {
 
         pub let farmCap: Capability<&{FlowFarm.Farmable}>
         pub var payment: @FlowToken.Vault?
@@ -27,14 +32,32 @@ pub contract PickingContract {
             return <- payment!
         }
 
-        pub fun withdrawFarmer(): @FlowFarm.Farmer? {
+        pub fun withdrawFarmer(): @FlowFarm.Farmer {
+
+            // harvest strawberries before returning Farmer
+            // harvest() fails if Farmer is still working
             let strawberries <- self.farmCap.borrow()!.harvest()
+
+            // deposit yield into contract capability
             self.strawberryReceiver.borrow()!.deposit(from: <-strawberries)
-            return <- self.farmCap.borrow()!.withdrawFarmer()
+
+            return <- self.farmCap.borrow()!.withdrawFarmer()!
         }
 
         destroy() {
             destroy self.payment
         }
+    }
+
+    pub fun newStrawberryPickingContract(
+        farmCap: Capability<&{FlowFarm.Farmable}>,
+        payment: @FlowToken.Vault,
+        strawberryReceiver: Capability<&Strawberry.Vault{FungibleToken.Receiver}>
+    ): @PickingContract.StrawberryContract {
+        return <- create StrawberryContract(
+            farmCap: farmCap,
+            payment: <-payment,
+            strawberryReceiver: strawberryReceiver
+        )
     }
 }

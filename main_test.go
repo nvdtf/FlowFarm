@@ -42,21 +42,7 @@ func TestPickingContract(y *testing.T) {
 	o := overflow.Overflow()
 
 	o.Tx(
-		"owner/1_plant",
-		overflow.WithSigner("owner"),
-	)
-
-	noop(o, 10)
-
-	o.Tx(
-		"owner/2_employ",
-		overflow.WithSigner("owner"),
-	)
-
-	noop(o, 10)
-
-	o.Tx(
-		"owner/3_harvest",
+		"contractor/1_issue",
 		overflow.WithSigner("owner"),
 	)
 
